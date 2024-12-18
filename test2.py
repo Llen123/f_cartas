@@ -168,7 +168,4 @@ def jugar_con_pygame(datos_jugadores, mazo_jugadores):
 
     pygame.quit()
 
-#if __name__ == "__main__":
-#    datos_jugadores = obtener_jugadores()
-#    mazo_jugadores = preparar_mazo()
-#    jugar_con_pygame(datos_jugadores, mazo_jugadores)
+
