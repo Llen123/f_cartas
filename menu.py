@@ -68,6 +68,7 @@ def bubble_sort(jugadores, criterio, orden):
                 jugadores[i], jugadores[j] = jugadores[j], jugadores[i]
     return jugadores
 
+
 def mostrar_scoreboard():
     pygame.init()
     ANCHO, ALTO = 800, 600
@@ -95,31 +96,7 @@ def mostrar_scoreboard():
         color_texto=BLANCO
     )
     
-    boton_ordenar_puntos = crear_boton(
-        pantalla,
-        (200, 40),
-        (50, 100),
-        lambda: ordenar_y_actualizar("puntuacion", "desc"),
-        texto="Por Puntos",
-        fuente=fuente_texto,
-        color_texto=BLANCO
-    )
-    
-    boton_ordenar_victorias = crear_boton(
-        pantalla,
-        (200, 40),
-        (260, 100),
-        lambda: ordenar_y_actualizar("Victorias Elementales", "desc"),
-        texto="Por Victorias",
-        fuente=fuente_texto,
-        color_texto=BLANCO
-    )
-    
-    lista_botones = [boton_volver, boton_ordenar_puntos, boton_ordenar_victorias]
-    
-    def ordenar_y_actualizar(criterio, orden):
-        nonlocal jugadores_ordenados
-        jugadores_ordenados = bubble_sort(jugadores_del_historial, criterio, orden)
+    lista_botones = [boton_volver]
     
     while True:
         pantalla.fill(VERDE)
@@ -130,7 +107,6 @@ def mostrar_scoreboard():
         for i, jugador in enumerate(jugadores_ordenados[:5]):
             texto_jugador = fuente_texto.render(
                 f"{i+1}. {jugador['nombre']} - Puntos: {jugador['puntuacion']} - "
-                f"Victorias: {jugador['Victorias Elementales']} - "
                 f"Fecha: {jugador['Fecha Partida']}", 
                 True, 
                 BLANCO

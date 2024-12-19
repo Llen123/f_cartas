@@ -2,7 +2,6 @@ from juego import ejecutar_juego
 from ordenamiento import *
 import pygame
 from boton import *
-from constantes import *
 import sys
 
 def main():

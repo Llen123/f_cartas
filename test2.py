@@ -5,80 +5,98 @@ from jugadores import *
 from tateti import jugar_tateti
 from juego import *
 import os
-
+from botones import crear_boton, checkear_accion_botones
 # Create a global dictionary to cache sprites
 sprite_cache = {}
 
-def cargar_sprite(nombre_pokemon, tamano=(180, 150)):
-    """
-    Función para cargar y escalar un sprite de Pokemon
-    
-    Args:
-        nombre_pokemon (str): Nombre del Pokemon
-        tamano (tuple): Tamaño deseado para el sprite
-    
-    Returns:
-        pygame.Surface: Sprite escalado o None si no se encuentra
-    """
-    # Normalizar el nombre (lowercase)
+
+
+from botones import crear_boton, checkear_accion_botones
+
+def mostrar_ganador(pantalla, nombre_ganador, razon_victoria, fuente):
+    pantalla.fill((0, 0, 0))
+
+    texto_ganador = fuente.render(f"¡{nombre_ganador} es el ganador!", True, (255, 255, 255))
+    texto_razon = fuente.render(f"Razón: {razon_victoria}", True, (255, 255, 255))
+
+    pantalla.blit(texto_ganador, (400 - texto_ganador.get_width() // 2, 200))
+    pantalla.blit(texto_razon, (400 - texto_razon.get_width() // 2, 250))
+
+    boton_volver = crear_boton("Volver al Menú", 300, 350, 200, 50)
+    pygame.display.flip()
+
+    esperando = True
+    while esperando:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                esperando = False
+
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                checkear_accion_botones([boton_volver], evento)
+
+            if boton_volver["estado"] == "activo":
+                esperando = False
+
+
+def cargar_sprite(nombre_pokemon, tamano=(140, 120)):
     nombre_pokemon = nombre_pokemon.lower()
-    
-    # Verificar si el sprite ya está en caché
+
     if nombre_pokemon in sprite_cache:
         return sprite_cache[nombre_pokemon]
     
     try:
-        # Construir la ruta del archivo
-        ruta_sprite = os.path.join("imagenes", f"{nombre_pokemon}.png")
-        
-        # Cargar y escalar el sprite
+        ruta_sprite = f"imagenes/{nombre_pokemon}.png"
         sprite = pygame.image.load(ruta_sprite)
         sprite_escalado = pygame.transform.scale(sprite, tamano)
-        
-        # Guardar en caché
         sprite_cache[nombre_pokemon] = sprite_escalado
-        
         return sprite_escalado
     
     except FileNotFoundError:
-        # Retorna None si no se encuentra la imagen
         return None
 
-def renderizar_carta(pantalla, carta, pos_x, pos_y, fuente, nombre_jugador):
-    # Aumentar el alto de la carta
-    CARTA_ANCHO = 200
-    CARTA_ALTO = 350  # Aumentado de 260 a 350
+def limitar_texto(texto, max_caracteres):
+    if len(texto) > max_caracteres:
+        return texto[:max_caracteres - 3] + "..."
+    return texto
 
-    # Dibujar el fondo blanco de la carta con nuevo alto
+def renderizar_carta(pantalla, carta, pos_x, pos_y, fuente, nombre_jugador):
+    CARTA_ANCHO = 200
+    CARTA_ALTO = 320
+    MAX_CARACTERES = 20  
+
+    
+    fuente_detalles = pygame.font.Font(None, 24)  
+
     pygame.draw.rect(pantalla, (255, 255, 255), (pos_x, pos_y, CARTA_ANCHO, CARTA_ALTO))
     pygame.draw.rect(pantalla, (0, 0, 0), (pos_x, pos_y, CARTA_ANCHO, CARTA_ALTO), 2)
 
-    # Intentar cargar el sprite
-    sprite = cargar_sprite(carta['nombre'], tamano=(180, 200))  # Ajustar tamaño del sprite
+    sprite = cargar_sprite(carta['nombre'], tamano=(140, 120))
     
     if sprite:
-        # Dibujar el sprite más arriba
-        pantalla.blit(sprite, (pos_x + 10, pos_y + 10))
+        pygame.draw.rect(pantalla, (0, 0, 0), (pos_x + 30, pos_y + 10, 140, 120), 2)
+        pantalla.blit(sprite, (pos_x + 30, pos_y + 10))
     else:
-        # Mostrar texto de error si no se encuentra el sprite
-        texto_sin_imagen = fuente.render("Imagen no encontrada", True, (255, 0, 0))
-        pantalla.blit(texto_sin_imagen, (pos_x + 10, pos_y + 10))
+        texto_sin_imagen = fuente_detalles.render("Imagen no encontrada", True, (255, 0, 0))
+        pantalla.blit(texto_sin_imagen, (pos_x + 30, pos_y + 70))
 
-    # Propiedades de texto (ajustadas para hacer espacio al sprite y al nuevo alto)
+    
     propiedades = [
-        (f"Nombre: {carta['nombre']}", pos_x + 10, pos_y + 220),
-        (f"Velocidad: {carta['velocidad']}", pos_x + 10, pos_y + 240),
-        (f"Fuerza: {carta['fuerza']}", pos_x + 10, pos_y + 260),
-        (f"Elemento: {carta['elemento']}", pos_x + 10, pos_y + 280),
-        (f"Peso: {carta['peso']:.1f}", pos_x + 10, pos_y + 300),
-        (f"Altura: {carta['altura']:.1f}", pos_x + 10, pos_y + 320),
+        (f"Nombre: {limitar_texto(carta['nombre'], MAX_CARACTERES)}", pos_x + 10, pos_y + 140),
+        (f"Velocidad: {carta['velocidad']}", pos_x + 10, pos_y + 165),
+        (f"Fuerza: {carta['fuerza']}", pos_x + 10, pos_y + 190),
+        (f"Elemento: {limitar_texto(str(carta['elemento']), MAX_CARACTERES)}", pos_x + 10, pos_y + 215),
+        (f"Peso: {carta['peso']:.1f}", pos_x + 10, pos_y + 240),
+        (f"Altura: {carta['altura']:.1f}", pos_x + 10, pos_y + 265),
     ]
 
+    
     for texto, x, y in propiedades:
-        texto_renderizado = fuente.render(texto, True, (0, 0, 0))
+        texto_renderizado = fuente_detalles.render(texto, True, (0, 0, 0))
         pantalla.blit(texto_renderizado, (x, y))
 
-    renderizar_texto(pantalla, nombre_jugador, pos_x + 10, pos_y - 30, fuente)
+   
+    nombre_limitado = limitar_texto(nombre_jugador, MAX_CARACTERES)
+    renderizar_texto(pantalla, nombre_limitado, pos_x + 10, pos_y - 30, fuente)
 
 def renderizar_texto(pantalla, texto, pos_x, pos_y, fuente):
     texto_renderizado = fuente.render(texto, True, (0, 0, 0))  
@@ -116,6 +134,10 @@ def jugar_con_pygame(datos_jugadores, mazo_jugadores):
     running = True
     ronda = 1
     
+    # Definir variables para evitar errores
+    ganador_final = None
+    razon_victoria = ""
+
     while running:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
@@ -124,14 +146,10 @@ def jugar_con_pygame(datos_jugadores, mazo_jugadores):
         if mazo_jugadores["jugador1"] and mazo_jugadores["jugador2"]:
             carta1 = mazo_jugadores["jugador1"].pop(0)
             carta2 = mazo_jugadores["jugador2"].pop(0)
-            #print(f"\nRonda {ronda}:")
-            #print(mostrar_carta(carta1, datos_jugadores["jugador1"]["nombre"]))
-            #print(mostrar_carta(carta2, datos_jugadores["jugador2"]["nombre"]))
-#
             atributo_elegido = elegir_atributo_aleatorio(atributos)
-            #print(f"Atributo elegido: {atributo_elegido}")
-
-            mostrar_cartas_ronda(pantalla, carta1, carta2, fuente, atributo_elegido, datos_jugadores["jugador1"]["nombre"], datos_jugadores["jugador2"]["nombre"])
+            mostrar_cartas_ronda(pantalla, carta1, carta2, fuente, atributo_elegido, 
+                                 datos_jugadores["jugador1"]["nombre"], 
+                                 datos_jugadores["jugador2"]["nombre"])
 
             if atributo_elegido == "elemento":
                 resultado_tateti = jugar_tateti(carta1, carta2, datos_jugadores)
@@ -141,12 +159,6 @@ def jugar_con_pygame(datos_jugadores, mazo_jugadores):
                     ganador = datos_jugadores["jugador2"]["nombre"]
                 else:
                     ganador = "Empate"
-                
-                
-                elementos = [carta1["elemento"], carta2["elemento"]]
-                tablero = crear_tablero(elementos, 3, 3)
-                mostrar_tablero_tateti(pantalla, tablero, fuente)
-
             else:
                 resultado_comparacion = comparar_cartas(carta1, carta2, atributo_elegido)
                 if resultado_comparacion == "carta1":
@@ -160,8 +172,14 @@ def jugar_con_pygame(datos_jugadores, mazo_jugadores):
 
             mostrar_resultado_ronda(pantalla, ganador, fuente)
             ronda += 1
+
         else:
-            print("No quedan cartas en el mazo de algún jugador.")
+            # Determinar ganador y razón
+            resultado = verificar_condiciones_de_victoria(datos_jugadores, mazo_jugadores, ronda, 250)
+            ganador_final, razon_victoria = resultado
+
+            if ganador_final:
+                mostrar_ganador(pantalla, datos_jugadores[ganador_final]['nombre'], razon_victoria, fuente)
             running = False
 
         reloj.tick(30)

@@ -1,19 +1,30 @@
 import pygame
 def crear_boton(ventana, dimensiones, posicion, accion, imagen=None, texto="", fuente=None, color_texto=(0, 0, 0)):
+    # Comprobamos que 'posicion' y 'dimensiones' sean listas o tuplas de longitud 2
+    if not (type(posicion) in [list, tuple] and len(posicion) == 2):
+        raise ValueError("La 'posicion' debe ser una lista o tupla con dos elementos (x, y)")
+
+    if not (type(dimensiones) in [list, tuple] and len(dimensiones) == 2):
+        raise ValueError("Las 'dimensiones' deben ser una lista o tupla con dos elementos (ancho, alto)")
+    
+    x, y = posicion
+    ancho, alto = dimensiones
+
     boton = {
         "ventana": ventana,
         "dimensiones": dimensiones,
         "posicion": posicion,
         "accion": accion,
-        "imagen": pygame.image.load(imagen).convert_alpha() if imagen else None,
+        "imagen": None,
         "texto": texto,
         "fuente": fuente,
         "color_texto": color_texto,
         "estado_hover": False,
-        "rectangulo": pygame.Rect(posicion, dimensiones)
+        "rectangulo": pygame.Rect(x, y, ancho, alto)
     }
-
-    if boton["imagen"]:
+    
+    if imagen:
+        boton["imagen"] = pygame.image.load(imagen).convert_alpha()
         boton["imagen"] = pygame.transform.scale(boton["imagen"], dimensiones)
 
     return boton

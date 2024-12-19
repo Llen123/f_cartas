@@ -57,26 +57,29 @@ def jugar_ronda(ronda: int, datos_jugadores: dict, mazo_jugadores: dict, mesas: 
     return ganador
 
 
-
-def verificar_condiciones_de_victoria(datos_jugadores: dict, mazo_jugadores: dict, ronda: int, max_rondas: int) -> str:
-    
+def verificar_condiciones_de_victoria(datos_jugadores, mazo_jugadores, ronda, max_rondas):
     ganador_final = None
+    razon_victoria = ""
+
     ganador_por_cartas = verificar_ganador_por_cartas(mazo_jugadores)
     ganador_por_rondas = verificar_ganador_por_rondas(mazo_jugadores, ronda, max_rondas)
     ganador_por_victorias_elementales = verificar_victorias_elementales(datos_jugadores)
 
     if ganador_por_cartas:
-        print(f"{datos_jugadores[ganador_por_cartas]['nombre']} es el ganador porque se ha quedado con todas las cartas.")
+        razon_victoria = "Se quedó con todas las cartas."
         ganador_final = ganador_por_cartas
-    
+
     elif ganador_por_rondas:
-        print(f"{datos_jugadores[ganador_por_rondas]['nombre']} gana por tener más cartas tras {max_rondas} rondas.")
+        razon_victoria = f"Tiene más cartas tras {max_rondas} rondas."
         ganador_final = ganador_por_rondas
 
     elif ganador_por_victorias_elementales:
-        print(f"{datos_jugadores[ganador_por_victorias_elementales]['nombre']} gana con 10 victorias elementales.")
+        razon_victoria = "Logró 10 victorias elementales."
         ganador_final = ganador_por_victorias_elementales
-    return ganador_final
+
+    resultado = (ganador_final, razon_victoria)
+    return resultado
+
 
 def ejecutar_juego():
    
