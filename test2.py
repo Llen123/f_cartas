@@ -8,8 +8,7 @@ import os
 from botones import crear_boton, checkear_accion_botones
 # Create a global dictionary to cache sprites
 sprite_cache = {}
-
-
+timeBetweenFrames = 0.2
 
 from botones import crear_boton, checkear_accion_botones
 
@@ -22,7 +21,7 @@ def mostrar_ganador(pantalla, nombre_ganador, razon_victoria, fuente):
     pantalla.blit(texto_ganador, (400 - texto_ganador.get_width() // 2, 200))
     pantalla.blit(texto_razon, (400 - texto_razon.get_width() // 2, 250))
 
-    boton_volver = crear_boton("Volver al Menú", 300, 350, 200, 50)
+    boton_volver = crear_boton( pantalla, (300, 350), (200, 50), print("eldiablo"), texto="Volver", color_texto=(255, 255, 255), fuente=fuente)
     pygame.display.flip()
 
     esperando = True
@@ -64,7 +63,6 @@ def renderizar_carta(pantalla, carta, pos_x, pos_y, fuente, nombre_jugador):
     CARTA_ALTO = 320
     MAX_CARACTERES = 20  
 
-    
     fuente_detalles = pygame.font.Font(None, 24)  
 
     pygame.draw.rect(pantalla, (255, 255, 255), (pos_x, pos_y, CARTA_ANCHO, CARTA_ALTO))
@@ -98,6 +96,10 @@ def renderizar_carta(pantalla, carta, pos_x, pos_y, fuente, nombre_jugador):
     nombre_limitado = limitar_texto(nombre_jugador, MAX_CARACTERES)
     renderizar_texto(pantalla, nombre_limitado, pos_x + 10, pos_y - 30, fuente)
 
+def set_fps(fps):
+    global timeBetweenFrames
+    timeBetweenFrames = 1 / fps
+
 def renderizar_texto(pantalla, texto, pos_x, pos_y, fuente):
     texto_renderizado = fuente.render(texto, True, (0, 0, 0))  
     pantalla.blit(texto_renderizado, (pos_x, pos_y))
@@ -122,14 +124,14 @@ def mostrar_resultado_ronda(pantalla, ganador, fuente):
     texto_renderizado = fuente.render(texto, True, (255, 0, 0))
     pantalla.blit(texto_renderizado, (250, 100))  
     pygame.display.flip()
-    sleep(0.2)  
+    sleep(timeBetweenFrames)
 
 def jugar_con_pygame(datos_jugadores, mazo_jugadores):
     pygame.init()
     pantalla = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Cartas - Juego por Rondas")
     fuente = pygame.font.Font(None, 30)
-    reloj = pygame.time.Clock()
+    set_fps(5)
 
     running = True
     ronda = 1
@@ -181,8 +183,6 @@ def jugar_con_pygame(datos_jugadores, mazo_jugadores):
             if ganador_final:
                 mostrar_ganador(pantalla, datos_jugadores[ganador_final]['nombre'], razon_victoria, fuente)
             running = False
-
-        reloj.tick(30)
 
     pygame.quit()
 

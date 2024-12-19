@@ -35,6 +35,9 @@ def manejar_evento_caja(caja, evento):
             caja["texto"] = caja["texto"][:-1]
         else:
             caja["texto"] += evento.unicode
+            
+    if len(caja["texto"]) > 15:
+        caja["texto"] = caja["texto"][:15]
     return None
 
 def dibujar_caja_texto(pantalla, caja, fuente):
