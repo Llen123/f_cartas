@@ -8,8 +8,6 @@ import os
 from botones import crear_boton, checkear_accion_botones
 # Create a global dictionary to cache sprites
 sprite_cache = {}
-timeBetweenFrames = 0.2
-
 from botones import crear_boton, checkear_accion_botones
 
 def mostrar_ganador(pantalla, nombre_ganador, razon_victoria, fuente):
@@ -97,8 +95,7 @@ def renderizar_carta(pantalla, carta, pos_x, pos_y, fuente, nombre_jugador):
     renderizar_texto(pantalla, nombre_limitado, pos_x + 10, pos_y - 30, fuente)
 
 def set_fps(fps):
-    global timeBetweenFrames
-    timeBetweenFrames = 1 / fps
+    return 1 / fps
 
 def renderizar_texto(pantalla, texto, pos_x, pos_y, fuente):
     texto_renderizado = fuente.render(texto, True, (0, 0, 0))  
@@ -119,7 +116,7 @@ def mostrar_cartas_ronda(pantalla, carta1, carta2, fuente, atributo_elegido, nom
     renderizar_texto(pantalla, f"Atributo elegido: {atributo_elegido}", 250, 50, fuente)
     pygame.display.flip()
 
-def mostrar_resultado_ronda(pantalla, ganador, fuente):
+def mostrar_resultado_ronda(pantalla, ganador, fuente, timeBetweenFrames):
     texto = f"Ganador de la ronda: {ganador}"
     texto_renderizado = fuente.render(texto, True, (255, 0, 0))
     pantalla.blit(texto_renderizado, (250, 100))  
@@ -131,7 +128,7 @@ def jugar_con_pygame(datos_jugadores, mazo_jugadores):
     pantalla = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Cartas - Juego por Rondas")
     fuente = pygame.font.Font(None, 30)
-    set_fps(5)
+    timeBetweenFrames = set_fps(60)
 
     running = True
     ronda = 1
@@ -172,7 +169,7 @@ def jugar_con_pygame(datos_jugadores, mazo_jugadores):
                 else:
                     ganador = "Ninguno (Empate)"
 
-            mostrar_resultado_ronda(pantalla, ganador, fuente)
+            mostrar_resultado_ronda(pantalla, ganador, fuente, timeBetweenFrames)
             ronda += 1
 
         else:
