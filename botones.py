@@ -1,12 +1,6 @@
 import pygame
 def crear_boton(ventana, dimensiones, posicion, accion, imagen=None, texto="", fuente=None, color_texto=(0, 0, 0)):
-    # Comprobamos que 'posicion' y 'dimensiones' sean listas o tuplas de longitud 2
-    if not (type(posicion) in [list, tuple] and len(posicion) == 2):
-        raise ValueError("La 'posicion' debe ser una lista o tupla con dos elementos (x, y)")
 
-    if not (type(dimensiones) in [list, tuple] and len(dimensiones) == 2):
-        raise ValueError("Las 'dimensiones' deben ser una lista o tupla con dos elementos (ancho, alto)")
-    
     x, y = posicion
     ancho, alto = dimensiones
 
@@ -58,3 +52,6 @@ def checkear_accion_botones(lista_botones, evento):
 def actualizar_estados_botones(lista_botones, posicion_mouse):
     for boton in lista_botones:
         actualizar_estado(boton, posicion_mouse)
+
+
+

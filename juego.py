@@ -6,10 +6,6 @@ from tateti import *
 import time
 
 
-def obtener_jugadores() -> dict:
-    
-    datos_jugadores = obtener_nombres_jugadores()
-    return datos_jugadores
 
 def preparar_mazo() -> dict:
 
@@ -40,21 +36,27 @@ def mostrar_carta_jugadores(carta1: dict, carta2: dict, datos_jugadores: dict) -
         mostrar_carta(carta, datos_jugadores[jugador]["nombre"])
 
 
-def jugar_ronda(ronda: int, datos_jugadores: dict, mazo_jugadores: dict, mesas: list) -> str:
-    
-    print(f"\nRonda: {ronda}")
+def jugar_ronda(ronda: int, datos_jugadores: dict, mazo_jugadores: dict, mesas: list) -> dict:
     
     carta1, carta2 = sacar_carta_de_cada_jugador(mazo_jugadores)
     
     atributo_elegido = elegir_atributo_aleatorio(atributos)
-    print(f"Atributo elegido: {atributo_elegido}")
-    
+
     resultado_comparacion = comparar_cartas(carta1, carta2, atributo_elegido)
     
     mostrar_carta_jugadores(carta1, carta2, datos_jugadores)
 
     ganador = ganador_ronda(resultado_comparacion, carta1, carta2, datos_jugadores, mazo_jugadores, mesas, atributo_elegido)
-    return ganador
+    
+    nombre_ganador = datos_jugadores[ganador_ronda]["nombre"]
+
+    return {
+        "ganador": ganador,
+        "nombre_ganador": nombre_ganador,
+        "atributo_elegido": atributo_elegido,
+        "resultado_comparacion": resultado_comparacion
+    }
+
 
 
 def verificar_condiciones_de_victoria(datos_jugadores, mazo_jugadores, ronda, max_rondas):

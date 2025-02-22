@@ -26,13 +26,12 @@ def validar_nombres(nombre_jugador: str) -> str:
             f"El campo está vacío. Ingrese el nombre del jugador {nombre_jugador}: ").strip()
     return nombre
 
-def obtener_nombres_jugadores() -> dict:
 
-    datos_jugadores = {}
-    for nombres_jugadores in range(1, 3):
-        nombre = validar_nombres(nombres_jugadores)
-        datos_jugadores[f"jugador{nombres_jugadores}"] = {
-            "nombre": nombre, "puntuacion": 0, "Victorias Elementales": 0}
+def obtener_jugadores(nombre_jugador1="Jugador 1", nombre_jugador2="Jugador 2"):
+    datos_jugadores = {
+        "jugador1": {"nombre": nombre_jugador1, "victorias": 0, "victorias_elementales": {}},
+        "jugador2": {"nombre": nombre_jugador2, "victorias": 0, "victorias_elementales": {}},
+    }
     return datos_jugadores
 
 def guardar_datos_jugadores(datos_jugadores: dict, ganador_final: str) -> None:
