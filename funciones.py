@@ -12,7 +12,6 @@ def transferir_cartas(ganador: str, carta1: dict, carta2: dict, mazo_jugadores: 
     print(f"{datos_jugadores[ganador]['nombre']} gana la ronda y recibe las cartas")
 
 def resolver_empate(ganador: str, pilon_mesa: list, mazo_jugadores: dict) -> None:
-    
     if ganador == "jugador1":
         mazo_jugadores["jugador1"].extend(pilon_mesa)
     else:
@@ -21,7 +20,6 @@ def resolver_empate(ganador: str, pilon_mesa: list, mazo_jugadores: dict) -> Non
     pilon_mesa.clear()
 
 def verificar_ganador_por_cartas(mazo_jugadores) -> str:
-    
     ganador = None
     if len(mazo_jugadores["jugador1"]) == 0:
         ganador =  "jugador2"

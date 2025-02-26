@@ -36,7 +36,6 @@ def imprimir_tablero(tablero: list) -> None:
         print("-" * 5)
 
 def incrementar_si_valido(condicion: bool, contador: int) -> int:
-    '''Incrementa el contador si la condición es verdadera.'''
     if condicion:
         contador += 1
     return contador

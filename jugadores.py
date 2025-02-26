@@ -50,6 +50,5 @@ def guardar_datos_jugadores(datos_jugadores: dict, ganador_final: str) -> None:
 
     historial_partidas = manejar_archivo_json(archivo_json, "leer")
 
-
     historial_partidas.append(datos_partida)
     manejar_archivo_json(archivo_json, "escribir", historial_partidas)

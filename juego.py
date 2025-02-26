@@ -3,9 +3,6 @@ from mazo import *
 from jugadores import *
 from funciones import *
 from tateti import *
-import time
-
-
 
 def preparar_mazo() -> dict:
 
@@ -36,27 +33,35 @@ def mostrar_carta_jugadores(carta1: dict, carta2: dict, datos_jugadores: dict) -
         mostrar_carta(carta, datos_jugadores[jugador]["nombre"])
 
 
-def jugar_ronda(ronda: int, datos_jugadores: dict, mazo_jugadores: dict, mesas: list) -> dict:
-    
-    carta1, carta2 = sacar_carta_de_cada_jugador(mazo_jugadores)
-    
-    atributo_elegido = elegir_atributo_aleatorio(atributos)
+def jugar_ronda(ronda, datos_jugadores, mazo_jugadores, mesas):
+    carta_jugador1 = mazo_jugadores["jugador1"].pop(0)
+    carta_jugador2 = mazo_jugadores["jugador2"].pop(0)
 
-    resultado_comparacion = comparar_cartas(carta1, carta2, atributo_elegido)
-    
-    mostrar_carta_jugadores(carta1, carta2, datos_jugadores)
+    atributo_elegido = elegir_atributo_aleatorio(carta_jugador1)
 
-    ganador = ganador_ronda(resultado_comparacion, carta1, carta2, datos_jugadores, mazo_jugadores, mesas, atributo_elegido)
-    
-    nombre_ganador = datos_jugadores[ganador_ronda]["nombre"]
+    ganador_ronda = comparar_cartas(carta_jugador1, carta_jugador2, atributo_elegido)
+
+    if ganador_ronda == "jugador1":
+        
+        datos_jugadores["jugador1"]["puntuacion"] += 1
+        mesas.append((carta_jugador1, carta_jugador2))
+        resultado_comparacion = f"Jugador 1 gana la ronda con {atributo_elegido}."
+    elif ganador_ronda == "jugador2":
+
+        datos_jugadores["jugador2"]["puntuacion"] += 1
+        mesas.append((carta_jugador1, carta_jugador2))
+        resultado_comparacion = f"Jugador 2 gana la ronda con {atributo_elegido}."
+    else:
+
+        mesas.append((carta_jugador1, carta_jugador2))
+        resultado_comparacion = f"¡Empate en la ronda! Ambos jugadores tienen el mismo valor en {atributo_elegido}."
 
     return {
-        "ganador": ganador,
-        "nombre_ganador": nombre_ganador,
+        "ganador": ganador_ronda,
+        "nombre_ganador": datos_jugadores[ganador_ronda]["nombre"] if ganador_ronda else None,
         "atributo_elegido": atributo_elegido,
-        "resultado_comparacion": resultado_comparacion
+        "resultado_comparacion": resultado_comparacion,
     }
-
 
 
 def verificar_condiciones_de_victoria(datos_jugadores, mazo_jugadores, ronda, max_rondas):
@@ -72,12 +77,21 @@ def verificar_condiciones_de_victoria(datos_jugadores, mazo_jugadores, ronda, ma
         ganador_final = ganador_por_cartas
 
     elif ganador_por_rondas:
-        razon_victoria = f"Tiene más cartas tras {max_rondas} rondas."
-        ganador_final = ganador_por_rondas
+        if mazo_jugadores["jugador1"] == mazo_jugadores["jugador2"]:
+            razon_victoria = "¡Empate! Ambos jugadores tienen la misma cantidad de cartas."
+            ganador_final = None  
+        else:
+            razon_victoria = f"Tiene más cartas tras {max_rondas} rondas."
+            ganador_final = ganador_por_rondas
 
     elif ganador_por_victorias_elementales:
-        razon_victoria = "Logró 10 victorias elementales."
-        ganador_final = ganador_por_victorias_elementales
+        
+        if datos_jugadores["jugador1"]["Victorias Elementales"] == datos_jugadores["jugador2"]["Victorias Elementales"]:
+            razon_victoria = "¡Empate! Ambos jugadores tienen las mismas victorias elementales."
+            ganador_final = None  
+        else:
+            razon_victoria = "Logró 10 victorias elementales."
+            ganador_final = ganador_por_victorias_elementales
 
     resultado = (ganador_final, razon_victoria)
     return resultado

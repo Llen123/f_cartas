@@ -1,8 +1,5 @@
 from juego import ejecutar_juego
 from ordenamiento import *
-import pygame
-from boton import *
-import sys
 
 def main():
     while True:
@@ -13,7 +10,7 @@ def main():
             case "2":
                 criterio = input("¿Por qué criterio deseas ordenar? (puntuacion/Victorias Elementales): ")
                 orden = input("¿En qué orden deseas ver el ranking? (asc/desc): ")
-                ordenar(criterio, orden)  
+                ordenar_historial(criterio, orden)  
             case "3":
                 print("Saliendo...")
                 break
